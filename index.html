@@ -34,38 +34,36 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            padding: 30px 20px;
+            padding: 40px 20px;
         }
 
-        /* Branding - Moved to the top end */
+        /* Branding - Scaled up and anchored safely to the top */
         .header {
             text-align: center;
-            margin-bottom: 20px;
             width: 100%;
+            margin-bottom: 40px; /* Clean separation from the form layout */
         }
 
         .header h1 {
-            font-size: 32px; /* Increased heading size */
+            font-size: 32px; /* Large, premium heading size */
             font-weight: 700;
             letter-spacing: 3px;
             text-transform: uppercase;
         }
 
         .header p {
-            font-size: 10px; /* Kept exactly the same */
-            color: var(--muted-text); /* Kept exactly the same */
-            margin-top: 4px; /* Kept exactly the same */
+            font-size: 10px; /* Preserved exactly */
+            color: var(--muted-text); /* Preserved exactly */
+            margin-top: 4px; /* Preserved exactly */
         }
 
-        /* Form Container - Positioned beautifully below the header */
+        /* Form Container - Centers dynamically below header without vertical overflow quirks */
         .container {
             width: 100%;
             max-width: 400px;
             display: flex;
             flex-direction: column;
             gap: 24px;
-            margin-top: auto;
-            margin-bottom: auto; /* Centers the form in the remaining viewport space */
         }
 
         /* Input Groups */
@@ -184,14 +182,15 @@
 </head>
 <body>
 
-    <!-- Branding placed at the top end of the screen -->
+    <!-- Branding Section -->
     <div class="header">
         <h1>TimeLoop</h1>
         <p>Designed by Pankaj Mehra</p>
     </div>
 
+    <!-- Application Form -->
     <div class="container">
-        <!-- URL Input -->
+        <!-- YouTube Link Input -->
         <div class="input-group">
             <label for="yt-url">YouTube Link</label>
             <div class="url-wrapper">
@@ -200,7 +199,7 @@
             </div>
         </div>
 
-        <!-- Start Time -->
+        <!-- Start Time Configuration -->
         <div class="input-group">
             <label>Start Time (HH : MM : SS)</label>
             <div class="time-grid">
@@ -210,7 +209,7 @@
             </div>
         </div>
 
-        <!-- Stop Time -->
+        <!-- Stop Time Configuration -->
         <div class="input-group">
             <label>Stop Time (HH : MM : SS)</label>
             <div class="time-grid">
@@ -220,11 +219,11 @@
             </div>
         </div>
 
-        <!-- Action -->
+        <!-- Submission Trigger -->
         <button class="convert-btn" id="convert-btn">Convert & Copy</button>
     </div>
 
-    <!-- Toast Confirmation -->
+    <!-- Feedback Element -->
     <div class="toast" id="toast">Copied!</div>
 
     <script>
@@ -235,7 +234,6 @@
             const convertBtn = document.getElementById('convert-btn');
             const toast = document.getElementById('toast');
             
-            // Gather all time inputs in logical order
             const timeInputs = [
                 document.getElementById('start-h'),
                 document.getElementById('start-m'),
@@ -245,7 +243,7 @@
                 document.getElementById('stop-s')
             ];
 
-            // 1. Paste functionality utilizing the Clipboard API
+            // Clipboard API paste action
             pasteBtn.addEventListener('click', async () => {
                 try {
                     const text = await navigator.clipboard.readText();
@@ -256,18 +254,15 @@
                 }
             });
 
-            // 2. Time Inputs Processing & Focus Logic
+            // Focus routing and string cleanup logic
             timeInputs.forEach((input, index) => {
-                
-                // Allow numeric values only and auto-advance on 2 digits
                 input.addEventListener('input', function() {
-                    this.value = this.value.replace(/[^0-9]/g, ''); // Strip non-numeric
+                    this.value = this.value.replace(/[^0-9]/g, '');
                     if (this.value.length === 2 && index < timeInputs.length - 1) {
                         timeInputs[index + 1].focus();
                     }
                 });
 
-                // Handle Enter key for manual advance / submit
                 input.addEventListener('keydown', function(e) {
                     if (e.key === 'Enter') {
                         e.preventDefault();
@@ -280,7 +275,6 @@
                     }
                 });
 
-                // Auto-padding when leaving the input box
                 input.addEventListener('blur', function() {
                     if (this.value.length === 1) {
                         this.value = '0' + this.value;
@@ -290,7 +284,6 @@
                 });
             });
 
-            // Handle Enter key inside the URL input box
             ytUrlInput.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter') {
                     e.preventDefault();
@@ -298,7 +291,6 @@
                 }
             });
 
-            // Global shortcut: Escape to clear all inputs
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
                     ytUrlInput.value = '';
@@ -307,7 +299,7 @@
                 }
             });
 
-            // 3. Conversion and Logic
+            // Engine processing parameters
             convertBtn.addEventListener('click', async () => {
                 const url = ytUrlInput.value.trim();
                 
@@ -316,7 +308,6 @@
                     return;
                 }
 
-                // Robust Regex to extract YouTube Video ID (handles watch, embed, youtu.be, etc.)
                 const ytRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
                 const match = url.match(ytRegex);
 
@@ -327,28 +318,23 @@
 
                 const videoId = match[1];
 
-                // Convert times to total seconds
                 const startSecs = calculateSeconds(timeInputs[0].value, timeInputs[1].value, timeInputs[2].value);
                 const stopSecs = calculateSeconds(timeInputs[3].value, timeInputs[4].value, timeInputs[5].value);
 
-                // Build Final Link
                 let finalEmbedLink = `https://www.youtube.com/embed/${videoId}?enablejsapi=1`;
                 if (startSecs > 0) finalEmbedLink += `&start=${startSecs}`;
                 if (stopSecs > 0) finalEmbedLink += `&end=${stopSecs}`;
 
-                // Check if already correct embed format (Edge Case: unchanged if parameters match exactly)
                 if (url === finalEmbedLink) {
                     showToast('Link is already optimized');
                     return;
                 }
 
-                // Copy to clipboard
                 try {
                     await navigator.clipboard.writeText(finalEmbedLink);
                     showToast('Link Copied!');
-                    ytUrlInput.value = finalEmbedLink; // Show the user the generated link
+                    ytUrlInput.value = finalEmbedLink;
                 } catch (err) {
-                    // Fallback for older browsers
                     const tempInput = document.createElement('input');
                     tempInput.value = finalEmbedLink;
                     document.body.appendChild(tempInput);
@@ -360,7 +346,6 @@
                 }
             });
 
-            // Helper: Convert HH:MM:SS to total seconds
             function calculateSeconds(h, m, s) {
                 const hours = parseInt(h, 10) || 0;
                 const minutes = parseInt(m, 10) || 0;
@@ -368,12 +353,10 @@
                 return (hours * 3600) + (minutes * 60) + seconds;
             }
 
-            // Helper: Display clean Toast Notifications
             function showToast(message) {
                 toast.textContent = message;
                 toast.classList.add('show');
                 
-                // Clear existing timeout to prevent flickering if clicked multiple times
                 if(window.toastTimeout) clearTimeout(window.toastTimeout);
                 
                 window.toastTimeout = setTimeout(() => {
