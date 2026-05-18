@@ -2,20 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <!-- PWA & Safari Fullscreen Meta Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#000000">
     <title>TimeLoop</title>
     
     <style>
-        /* Global Design Variables */
+        /* CSS Variables & Reset */
         :root {
             --bg-color: #000000;
             --text-color: #ffffff;
-            --text-muted: #666666;
             --border-color: #ffffff;
-            --focus-glow: 0 0 12px rgba(255, 255, 255, 0.85);
+            --focus-glow: 0 0 10px rgba(255, 255, 255, 0.8);
             --transition-speed: 0.2s;
         }
 
@@ -24,74 +24,57 @@
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            -webkit-font-smoothing: antialiased;
         }
 
-        html, body {
-            background-color: #0a0a0a; /* Dark presentation backdrop background */
-            color: var(--text-color);
-            height: 100dvh;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Enforced 9:16 Container Frame - Adjusted to fix horizontal clipping */
-        .app-frame {
+        body {
             background-color: var(--bg-color);
-            width: 100%;
-            height: 100%;
-            /* Strict 9:16 safe bounds mapping */
-            max-width: min(430px, calc(100dvh * 9 / 16)); 
-            max-height: calc(100vw * 16 / 9);
+            color: var(--text-color);
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            padding: clamp(20px, 4vh, 36px) 24px;
-            position: relative;
-            box-shadow: 0 0 40px rgba(0, 0, 0, 0.85);
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            padding: 40px 20px;
         }
 
-        /* Border trim for landscape screen wrappers */
-        @media (min-aspect-ratio: 9/16) {
-            .app-frame {
-                border: 1px solid #222;
-                border-radius: 4px;
-            }
-        }
-
-        /* Branding Group */
+        /* Branding (Fixed to Top) */
         .header {
             text-align: center;
-            margin-bottom: 5px;
+            margin-bottom: 40px;
+            width: 100%;
         }
 
         .header h1 {
-            font-size: clamp(2.2rem, 5.5vh, 3rem);
-            font-weight: 800;
-            letter-spacing: -1px;
+            font-size: 1.4rem;
+            letter-spacing: 3px;
             text-transform: uppercase;
-            line-height: 1;
+            font-weight: 600;
         }
 
         .header p {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            letter-spacing: 2px;
-            text-transform: uppercase;
+            font-size: 0.8rem;
+            color: #aaaaaa;
             margin-top: 6px;
+            letter-spacing: 1px;
         }
 
-        /* Interactive Element Resets */
+        /* Main Container */
+        .container {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        /* Inputs & Buttons Common */
         input, button {
             background: transparent;
             border: 1px solid var(--border-color);
             color: var(--text-color);
-            border-radius: 0px;
+            border-radius: 4px;
             outline: none;
-            font-size: 1rem;
-            transition: box-shadow var(--transition-speed), background-color var(--transition-speed);
+            transition: box-shadow var(--transition-speed), border-color var(--transition-speed);
         }
 
         input:focus {
@@ -101,20 +84,20 @@
         button {
             cursor: pointer;
             text-transform: uppercase;
-            font-weight: 600;
+            font-weight: bold;
             letter-spacing: 1px;
         }
 
-        /* Core Form Content Layout */
-        .form-content {
-            display: flex;
-            flex-direction: column;
-            gap: clamp(16px, 3.5vh, 28px);
-            width: 100%;
-            margin: auto 0;
+        button:hover, button:focus {
+            box-shadow: var(--focus-glow);
+            background-color: #111;
         }
 
-        /* URL Block */
+        button:active {
+            transform: scale(0.98);
+        }
+
+        /* URL Input Group */
         .url-group {
             display: flex;
             gap: 10px;
@@ -123,144 +106,171 @@
 
         .url-group input {
             flex: 1;
-            padding: 12px;
-            font-size: 0.95rem;
-            min-width: 0; /* Prevents input element blowout */
+            padding: 12px 15px;
+            font-size: 1rem;
+            height: 48px;
         }
 
         .url-group button {
-            padding: 0 16px;
-            font-size: 0.8rem;
+            padding: 0 20px;
+            font-size: 0.85rem;
             white-space: nowrap;
+            height: 48px;
         }
 
-        .url-group button:hover, .url-group button:focus {
-            background-color: #ffffff;
-            color: #000000;
-        }
-
-        /* Timestamps Group - Redesigned to use safe fluid percentages */
-        .time-section {
+        /* Responsive Wrappers */
+        .time-boxes-wrapper {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 20px;
             width: 100%;
         }
 
+        /* Timestamp Sections */
+        .time-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+
         .time-section label {
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--text-muted);
+            letter-spacing: 1px;
+            color: #dddddd;
             font-weight: 500;
         }
 
         .time-inputs {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
             gap: 8px;
             width: 100%;
         }
 
         .time-inputs span {
+            font-weight: bold;
             font-size: 1.2rem;
-            font-weight: 300;
-            color: var(--text-muted);
-            user-select: none;
-            padding-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 48px;
         }
 
         .time-box {
-            flex: 1; /* Automatically auto-scales inside the 9:16 view bounds */
-            min-width: 0; /* Allows shrinking safely without forcing screen overflow */
-            height: clamp(40px, 5.5vh, 48px);
-            font-size: 1.15rem;
+            width: 65px;
+            height: 48px;
+            font-size: 1.2rem;
             text-align: center;
         }
 
-        /* Master CTA Button */
+        /* Convert Button */
         #convertBtn {
-            padding: clamp(12px, 2vh, 16px);
-            font-size: 0.95rem;
+            margin-top: 10px;
+            padding: 15px;
+            font-size: 1rem;
             background-color: var(--text-color);
             color: var(--bg-color);
-            border: 1px solid var(--text-color);
-            width: 100%;
-            margin-top: auto;
+            height: 52px;
         }
 
         #convertBtn:hover, #convertBtn:focus {
-            background-color: transparent;
-            color: var(--text-color);
+            background-color: #eeeeee;
             box-shadow: var(--focus-glow);
         }
 
-        /* Notification Engine */
+        /* Toast Notification */
         #toast {
-            position: absolute;
-            bottom: 12%;
+            position: fixed;
+            bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
             background-color: var(--text-color);
             color: var(--bg-color);
-            padding: 10px 20px;
-            font-weight: 600;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 0.9rem;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.2s ease;
-            z-index: 1000;
+            transition: opacity 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255,255,255,0.2);
         }
 
         #toast.show {
             opacity: 1;
         }
+
+        /* Desktop Layout Adjustments */
+        @media (min-width: 600px) {
+            body {
+                padding-top: 60px;
+            }
+
+            .container {
+                padding: 35px;
+                border: 1px solid #333;
+                border-radius: 8px;
+                background-color: #050505;
+            }
+            
+            .time-boxes-wrapper {
+                flex-direction: row;
+                justify-content: space-between;
+                gap: 25px;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <div class="app-frame">
-        <div class="header">
-            <h1>TimeLoop</h1>
-            <p>Designed by Pankaj Mehra</p>
+    <div class="header">
+        <h1>TimeLoop</h1>
+        <p>Designed by Pankaj Mehra</p>
+    </div>
+
+    <div class="container">
+        <!-- URL Input -->
+        <div class="url-group">
+            <input type="text" id="urlInput" placeholder="Paste YouTube Link here..." autocomplete="off">
+            <button id="pasteBtn" aria-label="Paste URL">Paste</button>
         </div>
 
-        <div class="form-content">
-            <div class="url-group">
-                <input type="text" id="urlInput" placeholder="Paste YouTube Link..." autocomplete="off">
-                <button id="pasteBtn" aria-label="Paste URL">Paste</button>
-            </div>
-
+        <div class="time-boxes-wrapper">
+            <!-- Start Time -->
             <div class="time-section">
                 <label>Start Time</label>
                 <div class="time-inputs">
-                    <input type="tel" class="time-box" data-idx="0" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="HH">
+                    <input type="tel" class="time-box start-box" data-idx="0" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="HH">
                     <span>:</span>
-                    <input type="tel" class="time-box" data-idx="1" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="MM">
+                    <input type="tel" class="time-box start-box" data-idx="1" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="MM">
                     <span>:</span>
-                    <input type="tel" class="time-box" data-idx="2" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="SS">
+                    <input type="tel" class="time-box start-box" data-idx="2" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="SS">
                 </div>
             </div>
 
+            <!-- Stop Time -->
             <div class="time-section">
                 <label>Stop Time</label>
                 <div class="time-inputs">
-                    <input type="tel" class="time-box" data-idx="3" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="HH">
+                    <input type="tel" class="time-box stop-box" data-idx="3" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="HH">
                     <span>:</span>
-                    <input type="tel" class="time-box" data-idx="4" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="MM">
+                    <input type="tel" class="time-box stop-box" data-idx="4" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="MM">
                     <span>:</span>
-                    <input type="tel" class="time-box" data-idx="5" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="SS">
+                    <input type="tel" class="time-box stop-box" data-idx="5" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="SS">
                 </div>
             </div>
         </div>
 
+        <!-- Action Button -->
         <button id="convertBtn">Convert & Copy</button>
-
-        <div id="toast">Link Copied!</div>
     </div>
+
+    <!-- Toast Confirmation -->
+    <div id="toast">Link Copied to Clipboard!</div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -270,26 +280,29 @@
             const timeBoxes = Array.from(document.querySelectorAll('.time-box'));
             const toast = document.getElementById('toast');
 
-            // System Clipboard Handling
+            // --- 1. Clipboard Paste API ---
             pasteBtn.addEventListener('click', async () => {
                 try {
                     const text = await navigator.clipboard.readText();
                     urlInput.value = text;
                     urlInput.focus();
                 } catch (err) {
-                    alert('Clipboard reading blocked. Paste manually inside the box.');
+                    alert('Clipboard access denied. Please paste manually.');
                 }
             });
 
-            // Input Navigation Framework
+            // --- 2. Time Boxes Logic (Auto-Advance, Padding, Enter Key) ---
             timeBoxes.forEach((box, index) => {
-                box.addEventListener('input', () => {
+                // Auto-advance on input length == 2
+                box.addEventListener('input', (e) => {
+                    // Strip non-numeric
                     box.value = box.value.replace(/[^0-9]/g, '');
                     if (box.value.length === 2 && index < timeBoxes.length - 1) {
                         timeBoxes[index + 1].focus();
                     }
                 });
 
+                // Handle Enter key for navigation / triggering conversion
                 box.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter') {
                         e.preventDefault();
@@ -302,6 +315,7 @@
                     }
                 });
 
+                // Auto-formatting (padding) on blur
                 box.addEventListener('blur', () => {
                     if (box.value === '') {
                         box.value = '00';
@@ -310,9 +324,11 @@
                     }
                 });
                 
+                // Select all text on focus for easier overwriting
                 box.addEventListener('focus', () => box.select());
             });
 
+            // Enter key on URL input moves to first time box
             urlInput.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
@@ -320,7 +336,7 @@
                 }
             });
 
-            // Master Application Reset Shortcut
+            // --- 3. Global Keyboard Shortcuts (Esc to clear) ---
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
                     urlInput.value = '';
@@ -329,7 +345,7 @@
                 }
             });
 
-            // Conversion Calculations
+            // --- 4. Core Conversion Logic ---
             const parseTimeToSeconds = (hours, minutes, seconds) => {
                 return (parseInt(hours || 0, 10) * 3600) + 
                        (parseInt(minutes || 0, 10) * 60) + 
@@ -344,21 +360,21 @@
 
             const showToast = () => {
                 toast.classList.add('show');
-                setTimeout(() => toast.classList.remove('show'), 2000);
+                setTimeout(() => toast.classList.remove('show'), 2500);
             };
 
             convertBtn.addEventListener('click', async () => {
                 const url = urlInput.value.trim();
-                if (!url) return alert('Please input a YouTube address.');
+                if (!url) return alert('Please enter a YouTube URL.');
 
-                if (url.includes('youtube.com/embed/')) {
+                if (url.includes('youtube.com/embed/') && url.includes('start=') && url.includes('end=')) {
                     await navigator.clipboard.writeText(url);
                     showToast();
                     return;
                 }
 
                 const videoId = extractYouTubeId(url);
-                if (!videoId) return alert('Unrecognized YouTube format.');
+                if (!videoId) return alert('Invalid YouTube URL.');
 
                 timeBoxes.forEach(box => { if(!box.value) box.value = '00'; });
 
@@ -366,7 +382,7 @@
                 const stopSec = parseTimeToSeconds(timeBoxes[3].value, timeBoxes[4].value, timeBoxes[5].value);
 
                 if (stopSec <= startSec && stopSec !== 0) {
-                    return alert('Stop stamp must succeed start stamp.');
+                    return alert('Stop time must be greater than Start time.');
                 }
 
                 const embedUrl = `https://www.youtube.com/embed/${videoId}?enablejsapi=1&start=${startSec}&end=${stopSec}`;
@@ -375,12 +391,12 @@
                     await navigator.clipboard.writeText(embedUrl);
                     showToast();
                 } catch (err) {
-                    const fallback = document.createElement('input');
-                    fallback.value = embedUrl;
-                    document.body.appendChild(fallback);
-                    fallback.select();
+                    const tempInput = document.createElement('input');
+                    tempInput.value = embedUrl;
+                    document.body.appendChild(tempInput);
+                    tempInput.select();
                     document.execCommand('copy');
-                    document.body.removeChild(fallback);
+                    document.body.removeChild(tempInput);
                     showToast();
                 }
             });
