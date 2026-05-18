@@ -31,37 +31,41 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            padding: 20px;
+            padding: 30px 20px;
         }
 
+        /* Branding - Moved to the top end */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .header h1 {
+            font-size: 32px; /* Increased heading size */
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .header p {
+            font-size: 10px; /* Kept exactly the same */
+            color: var(--muted-text); /* Kept exactly the same */
+            margin-top: 4px; /* Kept exactly the same */
+        }
+
+        /* Form Container - Positioned beautifully below the header */
         .container {
             width: 100%;
             max-width: 400px;
             display: flex;
             flex-direction: column;
             gap: 24px;
-        }
-
-        /* Branding */
-        .header {
-            text-align: center;
-            margin-bottom: 10px;
-        }
-
-        .header h1 {
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        .header p {
-            font-size: 10px;
-            color: var(--muted-text);
-            margin-top: 4px;
+            margin-top: auto;
+            margin-bottom: auto; /* Centers the form in the remaining viewport space */
         }
 
         /* Input Groups */
@@ -180,13 +184,13 @@
 </head>
 <body>
 
-    <div class="container">
-        <!-- Branding -->
-        <div class="header">
-            <h1>TimeLoop</h1>
-            <p>Designed by Pankaj Mehra</p>
-        </div>
+    <!-- Branding placed at the top end of the screen -->
+    <div class="header">
+        <h1>TimeLoop</h1>
+        <p>Designed by Pankaj Mehra</p>
+    </div>
 
+    <div class="container">
         <!-- URL Input -->
         <div class="input-group">
             <label for="yt-url">YouTube Link</label>
