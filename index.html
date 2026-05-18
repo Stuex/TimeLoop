@@ -10,20 +10,22 @@
     <title>TimeLoop</title>
     
     <style>
-        /* CSS Variables & Reset */
+        /* CSS Variables & Global Reset */
         :root {
             --bg-color: #000000;
             --text-color: #ffffff;
+            --text-muted: #888888;
             --border-color: #ffffff;
-            --focus-glow: 0 0 10px rgba(255, 255, 255, 0.8);
-            --transition-speed: 0.2s;
+            --focus-glow: 0 0 15px rgba(255, 255, 255, 0.9);
+            --transition-speed: 0.25s;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
         }
 
         body {
@@ -32,47 +34,52 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             min-height: 100vh;
-            padding: 20px;
+            padding: 40px 24px;
         }
 
-        /* Branding */
+        /* Top Screen Branding */
         .header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 60px;
+            width: 100%;
         }
 
         .header h1 {
-            font-size: 1.2rem;
-            letter-spacing: 2px;
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
             text-transform: uppercase;
-            font-weight: 600;
+            line-height: 1.1;
         }
 
         .header p {
-            font-size: 0.75rem;
-            color: #aaaaaa;
-            margin-top: 5px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 12px;
         }
 
-        /* Main Container */
+        /* Layout Container */
         .container {
             width: 100%;
-            max-width: 500px;
+            max-width: 540px;
             display: flex;
             flex-direction: column;
-            gap: 25px;
+            gap: 36px;
         }
 
-        /* Inputs & Buttons Common */
+        /* Interactive Elements Base Style */
         input, button {
             background: transparent;
             border: 1px solid var(--border-color);
             color: var(--text-color);
-            border-radius: 4px;
+            border-radius: 0px; /* Sharp minimalist edges */
             outline: none;
-            transition: box-shadow var(--transition-speed), border-color var(--transition-speed);
+            font-size: 1rem;
+            transition: box-shadow var(--transition-speed), border-color var(--transition-speed), background-color var(--transition-speed);
         }
 
         input:focus {
@@ -82,120 +89,141 @@
         button {
             cursor: pointer;
             text-transform: uppercase;
-            font-weight: bold;
-            letter-spacing: 1px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
         }
 
-        button:hover, button:focus {
-            box-shadow: var(--focus-glow);
-            background-color: #111;
-        }
-
-        button:active {
-            transform: scale(0.98);
-        }
-
-        /* URL Input Group */
+        /* URL Section Alignment */
         .url-group {
             display: flex;
-            gap: 10px;
+            gap: 12px;
+            width: 100%;
         }
 
         .url-group input {
             flex: 1;
-            padding: 12px 15px;
+            padding: 16px;
             font-size: 1rem;
+            letter-spacing: 0.5px;
         }
 
         .url-group button {
-            padding: 0 15px;
+            padding: 0 24px;
             font-size: 0.85rem;
             white-space: nowrap;
         }
 
-        /* Timestamp Sections */
+        .url-group button:hover, .url-group button:focus {
+            background-color: #ffffff;
+            color: #000000;
+            box-shadow: var(--focus-glow);
+        }
+
+        /* Timestamp Sections Grid Architecture */
+        .time-boxes-wrapper {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 32px;
+            width: 100%;
+        }
+
         .time-section {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 14px;
         }
 
         .time-section label {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #dddddd;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            font-weight: 500;
         }
 
         .time-inputs {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
         .time-inputs span {
-            font-weight: bold;
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: var(--text-muted);
+            user-select: none;
+            line-height: 1;
         }
 
         .time-box {
-            width: 60px;
-            height: 50px;
-            font-size: 1.2rem;
+            flex: 1;
+            max-width: 75px;
+            height: 54px;
+            font-size: 1.25rem;
             text-align: center;
+            letter-spacing: 0.5px;
         }
 
-        /* Convert Button */
+        /* Convert Button Styling */
         #convertBtn {
-            margin-top: 15px;
-            padding: 15px;
+            padding: 18px;
             font-size: 1rem;
             background-color: var(--text-color);
             color: var(--bg-color);
+            border: 1px solid var(--text-color);
+            margin-top: 10px;
         }
 
         #convertBtn:hover, #convertBtn:focus {
-            background-color: #eeeeee;
+            background-color: transparent;
+            color: var(--text-color);
             box-shadow: var(--focus-glow);
         }
 
-        /* Toast Notification */
+        #convertBtn:active {
+            transform: scale(0.99);
+        }
+
+        /* Toast Component */
         #toast {
             position: fixed;
-            bottom: 30px;
+            bottom: 40px;
             left: 50%;
             transform: translateX(-50%);
             background-color: var(--text-color);
             color: var(--bg-color);
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 0.9rem;
+            padding: 12px 28px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
         }
 
         #toast.show {
             opacity: 1;
         }
 
-        /* Desktop Layout Adjustments */
+        /* Responsive Desktop Variations */
         @media (min-width: 600px) {
-            .container {
-                padding: 30px;
-                border: 1px solid #333;
-                border-radius: 8px;
-                background-color: #050505;
+            body {
+                padding-top: 60px;
             }
             
+            .header h1 {
+                font-size: 4.5rem;
+            }
+
             .time-boxes-wrapper {
-                display: flex;
-                justify-content: space-between;
-                gap: 20px;
+                grid-template-columns: 1fr 1fr;
+                gap: 40px;
             }
-            
-            .time-section {
-                flex: 1;
+
+            .time-box {
+                max-width: none; /* Allows flexible stretch with clean grid gaps */
             }
         }
     </style>
@@ -208,14 +236,15 @@
     </div>
 
     <div class="container">
-        <!-- URL Input -->
+        <!-- URL Entry Box -->
         <div class="url-group">
             <input type="text" id="urlInput" placeholder="Paste YouTube Link here..." autocomplete="off">
             <button id="pasteBtn" aria-label="Paste URL">Paste</button>
         </div>
 
+        <!-- Segment Timestamps Setup -->
         <div class="time-boxes-wrapper">
-            <!-- Start Time -->
+            <!-- Start Point Configuration -->
             <div class="time-section">
                 <label>Start Time</label>
                 <div class="time-inputs">
@@ -227,7 +256,7 @@
                 </div>
             </div>
 
-            <!-- Stop Time -->
+            <!-- Stop Point Configuration -->
             <div class="time-section">
                 <label>Stop Time</label>
                 <div class="time-inputs">
@@ -240,12 +269,12 @@
             </div>
         </div>
 
-        <!-- Action Button -->
+        <!-- Generate Output Call-to-action -->
         <button id="convertBtn">Convert & Copy</button>
     </div>
 
-    <!-- Toast Confirmation -->
-    <div id="toast">Link Copied to Clipboard!</div>
+    <!-- Feedback Notice Component -->
+    <div id="toast">Link Copied!</div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -255,29 +284,26 @@
             const timeBoxes = Array.from(document.querySelectorAll('.time-box'));
             const toast = document.getElementById('toast');
 
-            // --- 1. Clipboard Paste API ---
+            // System Clipboard Handling
             pasteBtn.addEventListener('click', async () => {
                 try {
                     const text = await navigator.clipboard.readText();
                     urlInput.value = text;
                     urlInput.focus();
                 } catch (err) {
-                    alert('Clipboard access denied. Please paste manually.');
+                    alert('Clipboard reading blocked. Paste manually inside the box.');
                 }
             });
 
-            // --- 2. Time Boxes Logic (Auto-Advance, Padding, Enter Key) ---
+            // Input Navigation Framework
             timeBoxes.forEach((box, index) => {
-                // Auto-advance on input length == 2
-                box.addEventListener('input', (e) => {
-                    // Strip non-numeric
+                box.addEventListener('input', () => {
                     box.value = box.value.replace(/[^0-9]/g, '');
                     if (box.value.length === 2 && index < timeBoxes.length - 1) {
                         timeBoxes[index + 1].focus();
                     }
                 });
 
-                // Handle Enter key for navigation / triggering conversion
                 box.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter') {
                         e.preventDefault();
@@ -290,7 +316,6 @@
                     }
                 });
 
-                // Auto-formatting (padding) on blur
                 box.addEventListener('blur', () => {
                     if (box.value === '') {
                         box.value = '00';
@@ -299,11 +324,9 @@
                     }
                 });
                 
-                // Select all text on focus for easier overwriting
                 box.addEventListener('focus', () => box.select());
             });
 
-            // Enter key on URL input moves to first time box
             urlInput.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
@@ -311,7 +334,7 @@
                 }
             });
 
-            // --- 3. Global Keyboard Shortcuts (Esc to clear) ---
+            // Master Application Reset Shortcut
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
                     urlInput.value = '';
@@ -320,7 +343,7 @@
                 }
             });
 
-            // --- 4. Core Conversion Logic ---
+            // Conversion Calculations
             const parseTimeToSeconds = (hours, minutes, seconds) => {
                 return (parseInt(hours || 0, 10) * 3600) + 
                        (parseInt(minutes || 0, 10) * 60) + 
@@ -328,7 +351,6 @@
             };
 
             const extractYouTubeId = (url) => {
-                // Robust Regex handling youtu.be, youtube.com/watch?v=, youtube.com/embed/
                 const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
                 const match = url.match(regex);
                 return match ? match[1] : null;
@@ -336,14 +358,13 @@
 
             const showToast = () => {
                 toast.classList.add('show');
-                setTimeout(() => toast.classList.remove('show'), 2500);
+                setTimeout(() => toast.classList.remove('show'), 2200);
             };
 
             convertBtn.addEventListener('click', async () => {
                 const url = urlInput.value.trim();
-                if (!url) return alert('Please enter a YouTube URL.');
+                if (!url) return alert('Please input a YouTube address.');
 
-                // Check if already in correct embed format
                 if (url.includes('youtube.com/embed/') && url.includes('start=') && url.includes('end=')) {
                     await navigator.clipboard.writeText(url);
                     showToast();
@@ -351,34 +372,29 @@
                 }
 
                 const videoId = extractYouTubeId(url);
-                if (!videoId) return alert('Invalid YouTube URL.');
+                if (!videoId) return alert('Unrecognized YouTube format.');
 
-                // Ensure blurs are triggered to format empty boxes to "00"
                 timeBoxes.forEach(box => { if(!box.value) box.value = '00'; });
 
-                // Calculate Seconds
                 const startSec = parseTimeToSeconds(timeBoxes[0].value, timeBoxes[1].value, timeBoxes[2].value);
                 const stopSec = parseTimeToSeconds(timeBoxes[3].value, timeBoxes[4].value, timeBoxes[5].value);
 
                 if (stopSec <= startSec && stopSec !== 0) {
-                    return alert('Stop time must be greater than Start time.');
+                    return alert('Stop stamp must succeed start stamp.');
                 }
 
-                // Generate Output Link
                 const embedUrl = `https://www.youtube.com/embed/${videoId}?enablejsapi=1&start=${startSec}&end=${stopSec}`;
 
-                // Copy to Clipboard
                 try {
                     await navigator.clipboard.writeText(embedUrl);
                     showToast();
                 } catch (err) {
-                    // Fallback for older browsers
-                    const tempInput = document.createElement('input');
-                    tempInput.value = embedUrl;
-                    document.body.appendChild(tempInput);
-                    tempInput.select();
+                    const fallback = document.createElement('input');
+                    fallback.value = embedUrl;
+                    document.body.appendChild(fallback);
+                    fallback.select();
                     document.execCommand('copy');
-                    document.body.removeChild(tempInput);
+                    document.body.removeChild(fallback);
                     showToast();
                 }
             });
