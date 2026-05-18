@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- PWA & Safari Fullscreen Meta Tags -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -37,7 +36,7 @@
             padding: 40px 20px;
         }
 
-        /* Branding (Fixed to Top) */
+        /* Branding (Fixed perfectly to the top) */
         .header {
             text-align: center;
             margin-bottom: 40px;
@@ -64,7 +63,7 @@
             max-width: 500px;
             display: flex;
             flex-direction: column;
-            gap: 25px;
+            gap: 30px;
         }
 
         /* Inputs & Buttons Common */
@@ -106,23 +105,26 @@
 
         .url-group input {
             flex: 1;
-            padding: 12px 15px;
-            font-size: 1rem;
-            height: 48px;
+            padding: 0 15px;
+            font-size: 0.95rem;
+            height: 46px;
         }
 
         .url-group button {
-            padding: 0 20px;
+            padding: 0 22px;
             font-size: 0.85rem;
             white-space: nowrap;
-            height: 48px;
+            height: 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        /* Responsive Wrappers */
+        /* Responsive Wrapper for Time Sections */
         .time-boxes-wrapper {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 25px;
             width: 100%;
         }
 
@@ -131,16 +133,17 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             flex: 1;
         }
 
         .time-section label {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #dddddd;
-            font-weight: 500;
+            letter-spacing: 1.5px;
+            color: #bbbbbb;
+            font-weight: 600;
+            text-align: center;
         }
 
         .time-inputs {
@@ -154,27 +157,31 @@
         .time-inputs span {
             font-weight: bold;
             font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 48px;
+            color: #888888;
+            width: 10px;
+            text-align: center;
+            display: inline-block;
         }
 
         .time-box {
-            width: 65px;
-            height: 48px;
-            font-size: 1.2rem;
+            width: 58px;
+            height: 44px;
+            font-size: 1.1rem;
             text-align: center;
+            padding: 0;
         }
 
         /* Convert Button */
         #convertBtn {
-            margin-top: 10px;
-            padding: 15px;
-            font-size: 1rem;
+            padding: 0;
+            font-size: 0.95rem;
             background-color: var(--text-color);
             color: var(--bg-color);
-            height: 52px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
         }
 
         #convertBtn:hover, #convertBtn:focus {
@@ -197,7 +204,7 @@
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s ease;
-            box-shadow: 0 4px 15px rgba(255,255,255,0.2);
+            box-shadow: 0 4px 20px rgba(255,255,255,0.15);
         }
 
         #toast.show {
@@ -211,16 +218,16 @@
             }
 
             .container {
-                padding: 35px;
-                border: 1px solid #333;
-                border-radius: 8px;
+                padding: 40px;
+                border: 1px solid #222222;
+                border-radius: 12px;
                 background-color: #050505;
             }
             
             .time-boxes-wrapper {
                 flex-direction: row;
                 justify-content: space-between;
-                gap: 25px;
+                gap: 40px; /* Increased gap to visually separate Start and Stop groups */
             }
         }
     </style>
@@ -233,14 +240,12 @@
     </div>
 
     <div class="container">
-        <!-- URL Input -->
         <div class="url-group">
             <input type="text" id="urlInput" placeholder="Paste YouTube Link here..." autocomplete="off">
             <button id="pasteBtn" aria-label="Paste URL">Paste</button>
         </div>
 
         <div class="time-boxes-wrapper">
-            <!-- Start Time -->
             <div class="time-section">
                 <label>Start Time</label>
                 <div class="time-inputs">
@@ -252,7 +257,6 @@
                 </div>
             </div>
 
-            <!-- Stop Time -->
             <div class="time-section">
                 <label>Stop Time</label>
                 <div class="time-inputs">
@@ -265,11 +269,9 @@
             </div>
         </div>
 
-        <!-- Action Button -->
         <button id="convertBtn">Convert & Copy</button>
     </div>
 
-    <!-- Toast Confirmation -->
     <div id="toast">Link Copied to Clipboard!</div>
 
     <script>
@@ -295,7 +297,6 @@
             timeBoxes.forEach((box, index) => {
                 // Auto-advance on input length == 2
                 box.addEventListener('input', (e) => {
-                    // Strip non-numeric
                     box.value = box.value.replace(/[^0-9]/g, '');
                     if (box.value.length === 2 && index < timeBoxes.length - 1) {
                         timeBoxes[index + 1].focus();
