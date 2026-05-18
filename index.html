@@ -10,7 +10,7 @@
     <title>TimeLoop</title>
     
     <style>
-        /* CSS Variables & Global Reset */
+        /* Global Design Variables */
         :root {
             --bg-color: #000000;
             --text-color: #ffffff;
@@ -29,31 +29,45 @@
         }
 
         html, body {
-            background-color: var(--bg-color);
+            background-color: #0a0a0a; /* Dark backdrop outside the frame */
             color: var(--text-color);
-            height: 100%;
-            height: 100dvh; /* Dynamic viewport prevents keyboard scrolling */
-            overflow: hidden; /* Hard block on manual viewport scrolling */
-        }
-
-        body {
+            height: 100dvh;
+            overflow: hidden;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 16px;
         }
 
-        /* Top Screen Branding - Highly scalable font clamps */
+        /* Enforced 9:16 Container Frame */
+        .app-frame {
+            background-color: var(--bg-color);
+            width: 100%;
+            height: 100%;
+            max-width: calc(100dvh * 9 / 16); /* Forces 9:16 constraint based on height */
+            max-height: calc(100vw * 16 / 9); /* Forces 9:16 constraint based on width */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Dynamic spacing layout */
+            padding: clamp(24px, 5vh, 40px) clamp(20px, 4vw, 32px);
+            position: relative;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8);
+        }
+
+        /* Desktop specific aesthetic outline */
+        @media (min-aspect-ratio: 9/16) {
+            .app-frame {
+                border: 1px solid #222;
+            }
+        }
+
+        /* Branding Group */
         .header {
             text-align: center;
-            margin-bottom: clamp(16px, 4vh, 40px);
-            width: 100%;
-            flex-shrink: 1;
+            margin-bottom: 10px;
         }
 
         .header h1 {
-            font-size: clamp(2rem, 8vh, 3.8rem);
+            font-size: clamp(2.2rem, 6vh, 3.2rem);
             font-weight: 800;
             letter-spacing: -1px;
             text-transform: uppercase;
@@ -61,23 +75,14 @@
         }
 
         .header p {
-            font-size: clamp(0.7rem, 1.5vh, 0.8rem);
+            font-size: clamp(0.7rem, 1.5vh, 0.75rem);
             color: var(--text-muted);
             letter-spacing: 2px;
             text-transform: uppercase;
-            margin-top: 6px;
+            margin-top: 8px;
         }
 
-        /* Layout Container */
-        .container {
-            width: 100%;
-            max-width: 480px;
-            display: flex;
-            flex-direction: column;
-            gap: clamp(14px, 3vh, 28px);
-        }
-
-        /* Interactive Elements Base Style */
+        /* Interactive Element Resets */
         input, button {
             background: transparent;
             border: 1px solid var(--border-color);
@@ -99,7 +104,16 @@
             letter-spacing: 1px;
         }
 
-        /* URL Section Alignment */
+        /* Core Form Layout (Scroll-free architecture) */
+        .form-content {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(16px, 3.5vh, 32px);
+            width: 100%;
+            margin: auto 0;
+        }
+
+        /* URL Block */
         .url-group {
             display: flex;
             gap: 10px;
@@ -123,18 +137,11 @@
             color: #000000;
         }
 
-        /* Timestamp Sections Grid Architecture */
-        .time-boxes-wrapper {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 16px;
-            width: 100%;
-        }
-
+        /* Timestamps Grouped Sequentially for Mobile Layout */
         .time-section {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
         }
 
         .time-section label {
@@ -160,18 +167,20 @@
 
         .time-box {
             flex: 1;
-            height: clamp(40px, 6vh, 48px);
-            font-size: 1.15rem;
+            height: clamp(42px, 6vh, 50px);
+            font-size: 1.2rem;
             text-align: center;
         }
 
-        /* Convert Button Styling */
+        /* Master CTA Button */
         #convertBtn {
-            padding: clamp(12px, 2vh, 16px);
+            padding: clamp(14px, 2vh, 18px);
             font-size: 0.95rem;
             background-color: var(--text-color);
             color: var(--bg-color);
             border: 1px solid var(--text-color);
+            width: 100%;
+            margin-top: auto;
         }
 
         #convertBtn:hover, #convertBtn:focus {
@@ -180,10 +189,10 @@
             box-shadow: var(--focus-glow);
         }
 
-        /* Toast Component */
+        /* Notification Engine */
         #toast {
-            position: fixed;
-            bottom: 24px;
+            position: absolute;
+            bottom: 10%;
             left: 50%;
             transform: translateX(-50%);
             background-color: var(--text-color);
@@ -202,63 +211,56 @@
         #toast.show {
             opacity: 1;
         }
-
-        /* Responsive Desktop Variations */
-        @media (min-width: 600px) {
-            .time-boxes-wrapper {
-                grid-template-columns: 1fr 1fr;
-                gap: 24px;
-            }
-        }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>TimeLoop</h1>
-        <p>Designed by Pankaj Mehra</p>
-    </div>
-
-    <div class="container">
-        <!-- URL Entry Box -->
-        <div class="url-group">
-            <input type="text" id="urlInput" placeholder="Paste YouTube Link..." autocomplete="off">
-            <button id="pasteBtn" aria-label="Paste URL">Paste</button>
+    <div class="app-frame">
+        <!-- Brand Unit -->
+        <div class="header">
+            <h1>TimeLoop</h1>
+            <p>Designed by Pankaj Mehra</p>
         </div>
 
-        <!-- Segment Timestamps Setup -->
-        <div class="time-boxes-wrapper">
-            <!-- Start Point Configuration -->
+        <!-- Inputs Engine Context -->
+        <div class="form-content">
+            <!-- Link Field -->
+            <div class="url-group">
+                <input type="text" id="urlInput" placeholder="Paste YouTube Link..." autocomplete="off">
+                <button id="pasteBtn" aria-label="Paste URL">Paste</button>
+            </div>
+
+            <!-- Start Time Field configuration -->
             <div class="time-section">
                 <label>Start Time</label>
                 <div class="time-inputs">
-                    <input type="tel" class="time-box start-box" data-idx="0" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="HH">
+                    <input type="tel" class="time-box" data-idx="0" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="HH">
                     <span>:</span>
-                    <input type="tel" class="time-box start-box" data-idx="1" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="MM">
+                    <input type="tel" class="time-box" data-idx="1" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="MM">
                     <span>:</span>
-                    <input type="tel" class="time-box start-box" data-idx="2" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="SS">
+                    <input type="tel" class="time-box" data-idx="2" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="SS">
                 </div>
             </div>
 
-            <!-- Stop Point Configuration -->
+            <!-- Stop Time Field configuration -->
             <div class="time-section">
                 <label>Stop Time</label>
                 <div class="time-inputs">
-                    <input type="tel" class="time-box stop-box" data-idx="3" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="HH">
+                    <input type="tel" class="time-box" data-idx="3" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="HH">
                     <span>:</span>
-                    <input type="tel" class="time-box stop-box" data-idx="4" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="MM">
+                    <input type="tel" class="time-box" data-idx="4" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="MM">
                     <span>:</span>
-                    <input type="tel" class="time-box stop-box" data-idx="5" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="SS">
+                    <input type="tel" class="time-box" data-idx="5" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="SS">
                 </div>
             </div>
         </div>
 
-        <!-- Generate Output Call-to-action -->
+        <!-- Processing Module Activation -->
         <button id="convertBtn">Convert & Copy</button>
-    </div>
 
-    <!-- Feedback Notice Component -->
-    <div id="toast">Link Copied!</div>
+        <!-- Feedback UI Element -->
+        <div id="toast">Link Copied!</div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
